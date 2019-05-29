@@ -15,7 +15,7 @@
  * [Configuration](#configuration)
    * [Configurate atrigger](#atrigger-configuration)
    * [Configurate your notifications](#notifications)
-     * [Filling in configuration form](#filling-in-configuration-form-on-heroku))
+     * [Filling in configuration form](#filling-in-configuration-form-on-heroku)
  * [Notifications](#notifications)
  * [IFTTT Applets tutorials](#ifttt-applets-tutorials)
     * [Facebook Messenger notifications](#facebook-messenger)
@@ -154,7 +154,10 @@ heroku token is your unique API key.
 **BetterMemorySugarBot** has two ways of notifying. I recomend notifying via **IFTTT**. It`s completly free, easier to set up and it is flexible. You can choose notifying via **facebook messenger**, **push notifications** from mobile app or **email**. Of course, you can explore this platform and combine BetterMemorySugarBot with other services on your own.Second options is **SMS via Twilio API**. I have to warn you, that **when free credits are run out, you will have to pay for text messages**. To use your free credits you do not have to give them any credit card or any other billing info. It is also a little more complicated to configurate than IFTTT. If you had decided, you can go to [notifications configuration instruction](#notifications-configuration-instructions)
 
 ### Notifications configuration instruction
-1. [Log in to your website](#logging-in-to-your-website) and go to notifications center.
+1. [Log in to your website](#logging-in-to-your-website) and go to menu view.
+2. Choose your notification time (custom time when notification occures). **PLEASE TYPE [UTC TIME](https://www.timeanddate.com/time/map/)**. Click `CHANGE`. *Default value is 16 (UTC)*.
+![doc67](/readme-images/doc67.png)
+2. Go to notifications center.
 ![doc26](/readme-images/doc26.png)
 3.  Choose your notifications way (you can choose both) and click `CHANGE` button. (picture below)
 ![doc27](/readme-images/doc27.png)
@@ -321,3 +324,24 @@ If you had done all the steps from [instalation](#instalation) and [configuratio
 4. **Congratulations !!!** Your app is working. Your first notifications has been sended ! Now every day at give time, BetterMemorySugarBot will send you a notification with remaing time. If you wants to check remaing time without notification, just click `QUIET CHECKUP` button in menu.
 
 # Update my site
+To check, if your site is up-to-date or not you should go to your forked repo.
+1. Now look for message
+    > This branch is `<some number>` commits behind Simon-the-Shark:master.
+    (picture below)
+![doc60](/readme-images/doc60.png)
+2. If there is no message like this, your website is up-to-date
+3. If you can see the message, your website needs to be updated. Follow the instructions below.
+4. Click `Compare` button
+![doc61](/readme-images/doc61.png)
+5. Click `switching the base`
+![doc62](/readme-images/doc62.png)
+6. You should see page similar to below. Click `Create pull request` button
+![doc63](/readme-images/doc63.png)
+7. Now click green `Merge pull request` button
+![doc64](/readme-images/doc64.png)
+8. Type short description and click `Confirm merge button` (example picture below)
+![doc65](/readme-images/doc65.png)
+9. Now message in your repository should contain `ahead` word
+![doc66](/readme-images/doc66.png)
+
+
