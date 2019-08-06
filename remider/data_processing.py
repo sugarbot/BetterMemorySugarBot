@@ -1,8 +1,9 @@
 import sys
 from datetime import datetime, timedelta, timezone, time
 
-from infusionset_reminder.settings import INFUSION_SET_ALERT_FREQUENCY, SENSOR_ALERT_FREQUENCY
-from .languages import *
+from django.conf import settings
+from django.utils.translation import ugettext as _
+
 from .models import InfusionChanged, SensorChanged, LastTriggerSet, TriggerTime
 
 
@@ -23,10 +24,10 @@ def process_nightscouts_api_response(response):
 
         for set in response_text:
             try:
-                if inf_date is None and set['notes'] == "Reservoir changed":
+                if inf_date is None and (set["eventType"] == "Site Change" or set['notes'] == "Reservoir changed"):
                     inf_date = set["created_at"]
                     InfusionChanged.objects.update_or_create(id=1, defaults={"date": inf_date, })
-                elif sensor_date is None and set['notes'] == "Sensor changed":
+                elif sensor_date is None and (set["eventType"] == "Sensor Change" or set['notes'] == "Sensor changed"):
                     sensor_date = set['created_at']
                     SensorChanged.objects.update_or_create(id=1, defaults={"date": sensor_date, })
             except KeyError:
@@ -35,13 +36,13 @@ def process_nightscouts_api_response(response):
         try:
             inf_date = InfusionChanged.objects.get(id=1).date
         except InfusionChanged.DoesNotExist:
-            print("warning: infusion set change has never been cached")
+            print(_("warning: infusion set change has never been cached"))
             sys.stdout.flush()
 
         try:
             sensor_date = SensorChanged.objects.get(id=1).date
         except SensorChanged.DoesNotExist:
-            print("warning: CGM sensor change has never been cached")
+            print(_("warning: CGM sensor change has never been cached"))
             sys.stdout.flush()
 
         return inf_date, sensor_date
@@ -53,7 +54,7 @@ def calculate_infusion(date):
     :param date: datetime of previous change of infusion set
     :return: time remains to next change
     """
-    infusion = timedelta(hours=INFUSION_SET_ALERT_FREQUENCY)
+    infusion = timedelta(hours=settings.INFUSION_SET_ALERT_FREQUENCY)
     infusion_alert_date = date + infusion
     infusion_time_remains = infusion_alert_date - datetime.now(timezone.utc)
 
@@ -66,7 +67,7 @@ def calculate_sensor(date):
     :param date:  datetime of previous change of CGM sensor
     :return: time remains to next change
     """
-    sensor = timedelta(hours=SENSOR_ALERT_FREQUENCY)
+    sensor = timedelta(hours=settings.SENSOR_ALERT_FREQUENCY)
     sensor_alert_date = date + sensor
     sensor_time_remains = sensor_alert_date - datetime.now(timezone.utc)
 
@@ -81,9 +82,9 @@ def get_sms_txt_infusion_set(time_remains):
     """
     days = time_remains.days
     if days < 0:
-        return languages_infusion_over
+        return _(".\n\n Your infusion set change has already passed")
     hours = round(time_remains.seconds / 3600)
-    text = languages_infusion_successful.format(days, hours)
+    text = _(".\n\n Your infusion set should be changed in {} days and {} hours.").format(days, hours)
 
     return text
 
@@ -96,9 +97,9 @@ def get_sms_txt_sensor(time_remains):
     """
     days = time_remains.days
     if days < 0:
-        return languages_sensor_over
+        return _("\n\n Your CGM sensor change has already passed")
     hours = round(time_remains.seconds / 3600)
-    text = languages_sensor_successful.format(days, hours)
+    text = _("\n\n Your CGM sensor should be changed in {} days and {} hours.").format(days, hours)
 
     return text
 

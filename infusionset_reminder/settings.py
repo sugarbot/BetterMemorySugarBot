@@ -14,6 +14,7 @@ import os
 
 import django_heroku
 from decouple import config
+from django.utils.translation import ugettext_lazy as _
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,7 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", True)
+DEBUG = config("DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -39,12 +40,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'remider.apps.RemiderConfig',
-    'crispy_forms',
+    "bootstrap4",
+    'bootstrap_datepicker_plus'
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -103,8 +106,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
+LANGUAGES = (
+    ("pl", _("Polish")),
+    ("en", _("English"))
+)
 
-LANGUAGE_CODE = config("LANGUAGE_CODE")
+LANGUAGE_CODE = config("LANGUAGE_CODE", default="en")
 
 TIME_ZONE = "UTC"
 
@@ -114,13 +121,16 @@ USE_L10N = True
 
 USE_TZ = True
 
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, "locale"),
+)
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
 
-token = config("heroku_token", default="")
-app_name = config("app_name")
+TOKEN = config("heroku_token", default="")
+APP_NAME = config("app_name")
 
 INFUSION_SET_ALERT_FREQUENCY = config("INFUSION_SET_ALERT_FREQUENCY", default=72, cast=int)
 SENSOR_ALERT_FREQUENCY = config("SENSOR_ALERT_FREQUENCY", default=144, cast=int)
@@ -131,30 +141,30 @@ TWILIO_AUTH_TOKEN = config("TWILIO_AUTH_TOKEN", default="")
 ATRIGGER_KEY = config("ATRIGGER_KEY", default="")
 ATRIGGER_SECRET = config("ATRIGGER_SECRET", default="")
 
-from_number = config("from_number", default="")
-nightscout_link = config("NIGHTSCOUT_LINK", default="")
+FROM_NUMBER = config("from_number", default="")
+NIGTSCOUT_LINK = config("NIGHTSCOUT_LINK", default="")
 
-to_numbers = []
+TO_NUMBERS = []
 i = 0
 while True:
     i += 1
     try:
         number = config("to_number_" + str(i))
-        to_numbers.append(number)
+        TO_NUMBERS.append(number)
     except:
         break
 
-ifttt_makers = []
+IFTTT_MAKERS = []
 i = 0
 
 while True:
     i += 1
     try:
         marker = config("IFTTT_MAKER_" + str(i))
-        ifttt_makers.append(marker)
+        IFTTT_MAKERS.append(marker)
     except:
         break
 
-trigger_ifttt = config("trigger_ifttt", default=False, cast=bool)
-send_sms = config("send_sms", default=False, cast=bool)
+TRIGGER_IFTTT = config("trigger_ifttt", default=False, cast=bool)
+SEND_SMS = config("send_sms", default=False, cast=bool)
 django_heroku.settings(locals())
